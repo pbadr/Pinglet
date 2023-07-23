@@ -1,0 +1,31 @@
+const serverLocations = {
+  'US East N. Virginia': 'dynamodb.us-east-1.amazonaws.com',
+  'US East Ohio': 'dynamodb.us-east-2.amazonaws.com',
+  'US West 1 North California': 'dynamodb.us-west-1.amazonaws.com',
+  'US West 2 Oregon': 'dynamodb.us-west-2.amazonaws.com',
+  'AF South 1 Africa (Cape Town)': 'dynamodb.af-south-1.amazonaws.com',
+  'AP East 1 Asia Pacific (Hong Kong)': 'dynamodb.ap-east-1.amazonaws.com',
+  'AP South 1 Asia Pacific (Mumbai)': 'dynamodb.ap-south-1.amazonaws.com',
+  'AP South 2 Asia Pacific (Hyderabad)': 'dynamodb.ap-south-2.amazonaws.com',
+  'AP Southeast 3 Asia Pacific (Jakarta)': 'dynamodb.ap-southeast-3.amazonaws.com',
+  'AP Southeast 4 Asia Pacific (Melbourne)': 'dynamodb.ap-southeast-4.amazonaws.com',
+  'AP Northeast 3 Asia Pacific (Osaka)': 'dynamodb.ap-northeast-3.amazonaws.com',
+  'AP Northeast 2 Asia Pacific (Seoul)': 'dynamodb.ap-northeast-2.amazonaws.com',
+  'AP Southeast 1 Asia Pacific (Singapore)': 'dynamodb.ap-southeast-1.amazonaws.com',
+  'AP Southeast 2 Asia Pacific (Sydney)': 'dynamodb.ap-southeast-2.amazonaws.com',
+  'AP Northeast 1 Asia Pacific (Tokyo)': 'dynamodb.ap-northeast-1.amazonaws.com',
+  'CA Central 1 Canada (Central)': 'dynamodb.ca-central-1.amazonaws.com',
+  'EU Central 1 Europe (Frankfurt)': 'dynamodb.eu-central-1.amazonaws.com',
+  'EU West 1 Europe (Ireland)': 'dynamodb.eu-west-1.amazonaws.com',
+  'EU West 2 Europe (London)': 'dynamodb.eu-west-2.amazonaws.com',
+  'EU South 1 Europe (Milan)': 'dynamodb.eu-south-1.amazonaws.com',
+  'EU West 3 Europe (Paris)': 'dynamodb.eu-west-3.amazonaws.com',
+  'EU South 2 Europe (Spain)': 'dynamodb.eu-south-2.amazonaws.com',
+  'EU North 1 Europe (Stockholm)': 'dynamodb.eu-north-1.amazonaws.com',
+  'EU Central 2 Europe (Zurich)': 'dynamodb.eu-central-2.amazonaws.com',
+  'ME South 1 Middle East (Bahrain)': 'dynamodb.me-south-1.amazonaws.com',
+  'ME Central 1 Middle East (UAE)': 'dynamodb.me-central-1.amazonaws.com',
+  'SA East 1 South America (São Paulo)': 'dynamodb.sa-east-1.amazonaws.com'
+};
+
+export default serverLocations;
