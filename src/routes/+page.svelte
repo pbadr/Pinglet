@@ -12,6 +12,7 @@
   $: inputRoomId = '';
   $: room = {} as RoomInfo;
   $: logs = [] as string[];
+  $: usersDonePinging = 0;
   $: error = '';
 
   onMount(() => {
@@ -60,6 +61,12 @@
       pingServers();
     });
 
+    // On ping updated
+    socket.on('ping-updated', (roomId: string, userId: string) => {
+      console.log(`User ${userId} has finished pinging`);
+      usersDonePinging++;
+    });
+
     // On best ping
     socket.on('best-ping', (bestAveragePings: averagePing[]) => {
       bestAveragePings.sort((a, b) => a.averagePing - b.averagePing);
@@ -77,15 +84,19 @@
     socket.off('user-joined');
     socket.off('user-left');
     socket.off('room-not-found');
-    socket.off('best-ping');
     socket.off('ping-started');
+    socket.off('ping-updated');
+    socket.off('best-ping');
   });
 
   function sendPingInformation(pingInformation: PingServerResponse[]) {
+    socket.emit('update-ping', room.roomId, socket.id);
     socket.emit('ping', pingInformation);
   }
 
   async function clientNotifyPing() {
+    usersDonePinging = 0;
+
     console.log("Notify all connected clients to ping...");
     socket.emit('notify-ping', room.roomId);
 
@@ -110,6 +121,7 @@
     try {
       const pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
       logs = pingInformation.map((pingInfo) => `${pingInfo.serverName} - ${pingInfo.responseTime}ms`);
+
       sendPingInformation(pingInformation);
     } catch (pingError) {
       console.log(error);
@@ -141,9 +153,10 @@
   <button on:click={() => navigator.clipboard.writeText(room.roomId)}>Copy ID</button>
   <p>Connected users: {room.totalUsers}</p>
   <p>Owner id: {room.roomOwnerId}</p>
+  <p>Users done pinging: {usersDonePinging}/{room.totalUsers}</p>
   {#if room.roomOwnerId == userId}
     <button on:click={clientNotifyPing}>Ping</button>
-    <button on:click={getBestPing}>Get best ping</button>
+    <button disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
   {/if}
   {#each logs as log}
   <p>{log}</p>

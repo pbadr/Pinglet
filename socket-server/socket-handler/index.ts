@@ -138,5 +138,9 @@ export default function socketHandler(server: any) {
     socket.on('notify-ping', (roomId: string) => {
       io.to(roomId).emit('ping-started');
     });
+
+    socket.on('update-ping', (roomId: string, userId: string) => {
+      io.to(roomId).emit('ping-updated', userId);
+    });
   });
 }
