@@ -1,10 +1,9 @@
-import type { RoomInfo } from '$lib/types';
+// @ts-nocheck
 import { Server } from 'socket.io';
 
-import { getAverageBestPing } from './utils';
-import type { PingInformation } from './utils';
+import { getAverageBestPing } from './utils/index.js';
 
-export default function socketHandler(server: any) {
+export default function socketHandler(server) {
   const io = new Server(server, {
     cors: {
       origin: 'http://127.0.0.1:5173'
@@ -12,8 +11,8 @@ export default function socketHandler(server: any) {
   });
   console.log("WebSocket server started");
 
-  const rooms: Map<string, RoomInfo> = new Map();
-  const users: Map<string, string> = new Map();
+  const rooms = new Map();
+  const users = new Map();
   
   /*
   Pings are roomIds => clientIds => PingInformation[]
@@ -28,7 +27,7 @@ export default function socketHandler(server: any) {
     }
   }
   */
-  const pings = new Map<string, Map<string, PingInformation[]>>();
+  const pings = new Map();
   
   io.on('connection', (socket) => {
 
@@ -41,7 +40,7 @@ export default function socketHandler(server: any) {
         return;
       
       // Broadcast to all users in room about user disconnection
-      const roomId = users.get(socket.id) as string;
+      const roomId = users.get(socket.id);
       io.to(roomId).emit('user-left', socket.id);
 
       // Remove user from users map
@@ -55,10 +54,10 @@ export default function socketHandler(server: any) {
       }
 
       const newConnectedUsers = rooms.get(roomId)?.usersConnected.filter((userId) => userId !== socket.id);
-      const room: RoomInfo = {
-        ...rooms.get(roomId)!,
-        usersConnected: newConnectedUsers!,
-        totalUsers: newConnectedUsers!.length
+      const room = {
+        ...rooms.get(roomId),
+        usersConnected: newConnectedUsers,
+        totalUsers: newConnectedUsers.length
       }
 
       console.log(room);
@@ -70,7 +69,7 @@ export default function socketHandler(server: any) {
       console.log(`Room created by ${socket.id}`);
       socket.join(socket.id);
 
-      const roomInfo: RoomInfo = {
+      const roomInfo = {
         roomOwnerId: socket.id,
         roomId: socket.id,
         usersConnected: [socket.id],
@@ -93,7 +92,7 @@ export default function socketHandler(server: any) {
         return;
       }
 
-      const room = rooms.get(roomId)!;
+      const room = rooms.get(roomId);
       socket.join(room.roomId);
       console.log(`[+] ${socket.id} joined room ${room.roomId}`);
 
@@ -101,7 +100,7 @@ export default function socketHandler(server: any) {
         ...room,
         usersConnected: [...room.usersConnected, socket.id],
         totalUsers: room.totalUsers + 1
-      } as RoomInfo;
+      };
       rooms.set(roomId, updatedRoom);
 
       console.log(updatedRoom);
@@ -111,21 +110,21 @@ export default function socketHandler(server: any) {
     });
 
     // Ping information from client
-    socket.on('ping', (pingInformationFromClient: PingInformation[]) => {
+    socket.on('ping', (pingInformationFromClient) => {
       // Get room of socket
-      const roomId = users.get(socket.id) as string;
+      const roomId = users.get(socket.id);
 
       // Get all previous clients in room with their pings
-      const previousClients = pings.get(roomId) || new Map<string, PingInformation[]>();
+      const previousClients = pings.get(roomId) || new Map();
       
       // Add new client with their pings
-      pings.set(roomId, new Map<string, PingInformation[]>([...previousClients, [socket.id, pingInformationFromClient]]));
+      pings.set(roomId, new Map([...previousClients, [socket.id, pingInformationFromClient]]));
     });
 
     // Get best ping for clients
     socket.on('get-best-ping', () => {
-      const roomId = users.get(socket.id) as string;
-      const clientPings = pings.get(roomId) || new Map<string, PingInformation[]>();
+      const roomId = users.get(socket.id);
+      const clientPings = pings.get(roomId) || new Map();
       const bestAveragePing = getAverageBestPing(clientPings);
 
 
@@ -135,11 +134,11 @@ export default function socketHandler(server: any) {
       io.to(roomId).emit('best-ping', bestAveragePingArray);
     });
 
-    socket.on('notify-ping', (roomId: string) => {
+    socket.on('notify-ping', (roomId) => {
       io.to(roomId).emit('ping-started');
     });
 
-    socket.on('update-ping', (roomId: string, userId: string) => {
+    socket.on('update-ping', (roomId, userId) => {
       io.to(roomId).emit('ping-updated', userId);
     });
   });

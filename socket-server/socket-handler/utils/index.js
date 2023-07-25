@@ -1,20 +1,16 @@
-export type PingInformation = {
-  serverName: string,
-  serverLocation: string,
-  responseTime: number,
-}
-
-
-export function getAverageBestPing(clientPings: Map<string, PingInformation[]>): Map<string, number> {
-  let averagePing: Map<string, number> = new Map();
+// @ts-ignore
+export function getAverageBestPing(clientPings) {
+  let averagePing = new Map();
+  // @ts-ignore
   clientPings.forEach((pings, _) => {
+    // @ts-ignore
     pings.forEach((pingInformation) => {
       if (!averagePing.has(pingInformation.serverName))
         averagePing.set(pingInformation.serverName, 0);
 
       averagePing.set(
         pingInformation.serverName,
-        averagePing.get(pingInformation.serverName)! + pingInformation.responseTime
+        averagePing.get(pingInformation.serverName) + pingInformation.responseTime
       );
     });
   });

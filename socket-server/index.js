@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
 
-import socketHandler from './socket-handler';
+import socketHandler from './socket-handler/index.js';
 
 import { handler } from '../build/handler.js';
 
