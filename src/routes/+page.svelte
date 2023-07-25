@@ -13,6 +13,7 @@
   $: room = {} as RoomInfo;
   $: logs = [] as string[];
   $: usersDonePinging = 0;
+  $: pinging = false;
   $: error = '';
 
   onMount(() => {
@@ -65,6 +66,10 @@
     socket.on('ping-updated', (roomId: string, userId: string) => {
       console.log(`User ${userId} has finished pinging`);
       usersDonePinging++;
+
+      if (usersDonePinging == room.totalUsers) {
+        pinging = false;
+      }
     });
 
     // On best ping
@@ -95,6 +100,7 @@
   }
 
   async function clientNotifyPing() {
+    pinging = true;
     usersDonePinging = 0;
 
     console.log("Notify all connected clients to ping...");
@@ -155,7 +161,7 @@
   <p>Owner id: {room.roomOwnerId}</p>
   <p>Users done pinging: {usersDonePinging}/{room.totalUsers}</p>
   {#if room.roomOwnerId == userId}
-    <button on:click={clientNotifyPing}>Ping</button>
+    <button disabled={pinging} on:click={clientNotifyPing}>Ping</button>
     <button disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
   {/if}
   {#each logs as log}
