@@ -1,6 +1,6 @@
 import ioClient from 'socket.io-client';
 
-const PORT = process.env.PORT;
+const PORT = 5919;
 
 const socket = ioClient(`http://localhost:${PORT}`);
 
