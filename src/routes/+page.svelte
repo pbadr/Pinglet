@@ -6,7 +6,7 @@
   import serverLocations from '$lib/location-server';
   import { pingServer } from '$lib/ping-server';
 
-  import type { PingServerResponse, RoomInfo } from '$lib/types';
+  import type { PingServerResponse, RoomInfo, averagePing } from '$lib/types';
 
   $: roomId = '';
   $: roomJoined = false;
@@ -58,9 +58,14 @@
     });
 
     // On best ping
-    socket.on('best-ping', (bestServerInfo) => {
-      console.log(bestServerInfo);
-    })
+    socket.on('best-ping', (bestAveragePings: averagePing[]) => {
+      bestAveragePings.sort((a, b) => a.averagePing - b.averagePing);
+
+      logs = [];
+      bestAveragePings.forEach((bestAveragePing) => {
+        logs.push(`${bestAveragePing.serverName} - ${bestAveragePing.averagePing}ms`);
+      });
+    });
   });
 
   onDestroy(() => {
@@ -79,7 +84,7 @@
   async function pingServers() {
     logs = [];
     error = '';
-    
+
     const pingPromises = Object.entries(serverLocations).map(
       async ([serverName, serverLocation]): Promise<PingServerResponse> => {
         const serverInfo = await pingServer(serverName, serverLocation);

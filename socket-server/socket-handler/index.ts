@@ -108,16 +108,13 @@ export default function socketHandler(server: any) {
     socket.on('get-best-ping', () => {
       const roomId = users.get(socket.id) as string;
       const clientPings = pings.get(roomId) || new Map<string, PingInformation[]>();
-      const averagePing = getAverageBestPing(clientPings);
+      const bestAveragePing = getAverageBestPing(clientPings);
 
 
-      // Convert Map to object
-      const averagePingObject: { [key: string]: number } = {};
-      averagePing.forEach((value, key) => {
-        averagePingObject[key] = value;
-      });
-      
-      io.to(roomId).emit('best-ping', averagePingObject);
+      // Convert Map to array of objects
+      const bestAveragePingArray = Array.from(bestAveragePing, ([serverName, averagePing]) => ({ serverName, averagePing }));
+      console.log(bestAveragePingArray);
+      io.to(roomId).emit('best-ping', bestAveragePingArray);
     });
   });
 }

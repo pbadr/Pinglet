@@ -8,3 +8,7 @@ export type RoomInfo = {
   roomId: string,
   usersConnected: number
 }
+
+export type averagePing = {
+  [serverName: string]: number
+}
