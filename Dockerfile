@@ -5,7 +5,6 @@ COPY package.json .
 RUN npm install
 RUN npm run build
 
-COPY build .
-COPY socket-server .
+COPY . .
 
 CMD ["node", "./socket-server"]
