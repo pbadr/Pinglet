@@ -1,3 +1,5 @@
+import type { PingServerResponse } from '../types';
+
 const headers = new Headers();
 headers.append('Accept-Encoding', 'gzip, deflate'); // Enable compression
 headers.append('Cache-Control', 'max-age=3600'); // Cache response for 1 hour
@@ -8,12 +10,6 @@ headers.append('Language', 'en-GB,en-US;q=0.9,en;q=0.8');
 const options = {
   method: 'GET',
   headers: headers,
-}
-
-export type PingServerResponse = {
-  serverName: string,
-  serverLocation: string,
-  responseTime: number,
 }
 
 export async function pingServer(serverName: string, serverLocation: string): Promise<PingServerResponse> {
