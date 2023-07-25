@@ -55,6 +55,11 @@
       error = 'Room not found. Please check the ID and try again.';
     });
 
+    // Initiate ping start
+    socket.on('ping-started', () => {
+      pingServers();
+    });
+
     // On best ping
     socket.on('best-ping', (bestAveragePings: averagePing[]) => {
       bestAveragePings.sort((a, b) => a.averagePing - b.averagePing);
@@ -73,10 +78,18 @@
     socket.off('user-left');
     socket.off('room-not-found');
     socket.off('best-ping');
+    socket.off('ping-started');
   });
 
   function sendPingInformation(pingInformation: PingServerResponse[]) {
     socket.emit('ping', pingInformation);
+  }
+
+  async function clientNotifyPing() {
+    console.log("Notify all connected clients to ping...");
+    socket.emit('notify-ping', room.roomId);
+
+    return;
   }
 
   async function pingServers() {
@@ -129,7 +142,7 @@
   <p>Connected users: {room.totalUsers}</p>
   <p>Owner id: {room.roomOwnerId}</p>
   {#if room.roomOwnerId == userId}
-    <button on:click={pingServers}>Ping all servers</button>
+    <button on:click={clientNotifyPing}>Ping</button>
     <button on:click={getBestPing}>Get best ping</button>
   {/if}
   {#each logs as log}

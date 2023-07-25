@@ -134,5 +134,9 @@ export default function socketHandler(server: any) {
       console.log(bestAveragePingArray);
       io.to(roomId).emit('best-ping', bestAveragePingArray);
     });
+
+    socket.on('notify-ping', (roomId: string) => {
+      io.to(roomId).emit('ping-started');
+    });
   });
 }
