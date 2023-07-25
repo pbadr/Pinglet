@@ -1,7 +1,8 @@
 import type { RoomInfo } from '$lib/types';
 import { Server } from 'socket.io';
 
-import type { ClientPings, PingInformation } from './utils';
+import { getAverageBestPing } from './utils';
+import type { PingInformation } from './utils';
 
 export default function socketHandler(server: any) {
   const io = new Server(server, {
@@ -13,14 +14,29 @@ export default function socketHandler(server: any) {
 
   const rooms: Map<string, string[]> = new Map();
   const users: Map<string, string> = new Map();
-  const pings: Map<string, ClientPings> = new Map(); // room.id -> [{ client.id -> pingInformation }, ...]
-
+  
+  /*
+  Pings are roomIds => clientIds => PingInformation[]
+  {
+    roomId: {
+      clientId: [...],
+      clientId2: [...]
+    },
+    roomId2: {
+      clientId: [...],
+      clientId2: [...]
+    }
+  }
+  */
+  const pings = new Map<string, Map<string, PingInformation[]>>();
+  
   io.on('connection', (socket) => {
-    console.log('User connected', socket.id);
+
+    console.log('[+] User connected', socket.id);
 
     // User disconnect
     socket.on('disconnect', () => {
-      console.log('User disconnected', socket.id);
+      console.log('[-] User disconnected', socket.id);
       if (!users.has(socket.id))
         return;
       
@@ -33,7 +49,7 @@ export default function socketHandler(server: any) {
 
       // If only one user left in room, delete room
       if (rooms.get(roomId)!.length === 1) {
-        console.log(`Room ${roomId} deleted`);
+        console.log(`[!] Room ${roomId} deleted`);
         rooms.delete(roomId);
         return;
       }
@@ -55,14 +71,14 @@ export default function socketHandler(server: any) {
     // Join room
     socket.on('join-room', (roomId) => {
       if (!rooms.has(roomId)) {
-        console.log(`${socket.id} tried to join non-existent room ${roomId}`);
+        console.log(`[!] ${socket.id} tried to join non-existent room ${roomId}`);
         socket.emit('room-not-found', roomId);
 
         return;
       }
 
       socket.join(roomId);
-      console.log(`${socket.id} joined room ${roomId}`);
+      console.log(`[+] ${socket.id} joined room ${roomId}`);
 
       rooms.get(roomId)!.push(socket.id);
       users.set(socket.id, roomId);
@@ -77,22 +93,31 @@ export default function socketHandler(server: any) {
     });
 
     // Ping information from client
-    socket.on('ping', (pingInformationFromClient: PingInformation) => {
+    socket.on('ping', (pingInformationFromClient: PingInformation[]) => {
       // Get room of socket
       const roomId = users.get(socket.id) as string;
 
-      const previousPings = pings.get(roomId) || {};
-      pings.set(roomId, {
-        ...previousPings,
-        [socket.id]: pingInformationFromClient
-      })
+      // Get all previous clients in room with their pings
+      const previousClients = pings.get(roomId) || new Map<string, PingInformation[]>();
       
-      console.log(pings);
+      // Add new client with their pings
+      pings.set(roomId, new Map<string, PingInformation[]>([...previousClients, [socket.id, pingInformationFromClient]]));
     });
 
     // Get best ping for clients
     socket.on('get-best-ping', () => {
-      // Get room of socket
+      const roomId = users.get(socket.id) as string;
+      const clientPings = pings.get(roomId) || new Map<string, PingInformation[]>();
+      const averagePing = getAverageBestPing(clientPings);
+
+
+      // Convert Map to object
+      const averagePingObject: { [key: string]: number } = {};
+      averagePing.forEach((value, key) => {
+        averagePingObject[key] = value;
+      });
+      
+      io.to(roomId).emit('best-ping', averagePingObject);
     });
   });
 }

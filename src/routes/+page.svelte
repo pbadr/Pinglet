@@ -56,6 +56,11 @@
       console.log('Room not found');
       error = 'Room not found. Please check the ID and try again.';
     });
+
+    // On best ping
+    socket.on('best-ping', (bestServerInfo) => {
+      console.log(bestServerInfo);
+    })
   });
 
   onDestroy(() => {
@@ -63,6 +68,8 @@
     socket.off('room-created');
     socket.off('user-joined');
     socket.off('user-left');
+    socket.off('room-not-found');
+    socket.off('best-ping');
   });
 
   function sendPingInformation(pingInformation: PingServerResponse[]) {
@@ -106,6 +113,7 @@
   }
 
   function getBestPing() {
+    console.log("Getting best ping...")
     socket.emit('get-best-ping');
   }
 </script>
