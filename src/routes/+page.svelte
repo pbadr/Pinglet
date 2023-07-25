@@ -93,7 +93,8 @@
 </script>
 
 {#if roomJoined}
-  <p>Room ID: {roomId}</p>
+  <p>Room ID: {roomId}</p> 
+  <button on:click={() => navigator.clipboard.writeText(roomId)}>Copy ID</button>
   <p>Connected users: {connectedUsers}</p>
   <button on:click={pingServers}>Ping all servers</button>
   {#each logs as log}
