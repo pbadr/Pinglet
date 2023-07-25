@@ -6,7 +6,7 @@
   import serverLocations from '$lib/location-server';
   import { pingServer } from '$lib/ping-server';
 
-  import type { RoomInfo } from '$lib/types';
+  import type { PingServerResponse, RoomInfo } from '$lib/types';
 
   $: roomId = '';
   $: roomJoined = false;
@@ -65,22 +65,26 @@
     socket.off('user-left');
   });
 
-  function sendPingInformation(logs: string[]) {
-    socket.emit('ping', logs);
+  function sendPingInformation(pingInformation: PingServerResponse[]) {
+    socket.emit('ping', pingInformation);
   }
 
   async function pingServers() {
     logs = [];
     const pingPromises = Object.entries(serverLocations).map(
-      async ([serverName, serverLocation]) => {
+      async ([serverName, serverLocation]): Promise<PingServerResponse> => {
         const serverInfo = await pingServer(serverName, serverLocation);
-        return `${serverInfo.serverName} - ${serverInfo.responseTime}ms`;
+        return {
+          serverName: serverInfo.serverName,
+          serverLocation: serverInfo.serverLocation,
+          responseTime: serverInfo.responseTime,
+        };
       }
     );
 
     try {
-      logs = await Promise.all(pingPromises);
-      sendPingInformation(logs);
+      const pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
+      sendPingInformation(pingInformation);
     } catch (pingError) {
       console.log(error);
       error = 'Error pinging one of the servers. Please try again.';

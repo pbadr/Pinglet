@@ -38,11 +38,6 @@ export default function socketHandler(server: any) {
       rooms.set(roomId, rooms.get(roomId)!.filter((id) => id !== socket.id));
     });
     
-    // Ping from client
-    socket.on('ping', (pingInformation) => {
-      console.log(`Pings received from ${socket.id}`, pingInformation);
-    });
-    
     // Create room
     socket.on('create-room', () => {
       console.log(`Room created by ${socket.id}`);
@@ -76,6 +71,11 @@ export default function socketHandler(server: any) {
       } as RoomInfo;
       
       io.to(roomId).emit('user-joined', roomInfo);
+    });
+
+    // Ping information from client
+    socket.on('ping', (pingInformation) => {
+      console.log(`Pings received from ${socket.id}`, pingInformation);
     });
   });
 }
