@@ -19,8 +19,9 @@ export function getAverageBestPing(clientPings: Map<string, PingInformation[]>):
     });
   });
 
-  averagePing.forEach((value, key) => {
-    averagePing.set(key, value / clientPings.size);
+  averagePing.forEach((responseTime, serverName) => {
+    const average = Math.trunc(responseTime / clientPings.size);
+    averagePing.set(serverName, average);
   });
 
   return averagePing;
