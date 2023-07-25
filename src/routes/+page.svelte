@@ -12,6 +12,7 @@
   $: roomJoined = false;
   $: connectedUsers = 0;
   $: logs = [] as string[];
+  $: error = '';
 
   onMount(() => {
     // On connect
@@ -20,10 +21,11 @@
     });
 
     // On room created
-    socket.on('room-created', (roomId: string) => {
-      console.log(`Room created: ${roomId}`);
-      console.log(`${socket.id} is now in room ${roomId}`)
+    socket.on('room-created', (joinedRoomId: string) => {
+      console.log(`Room created: ${joinedRoomId}`);
+      console.log(`${socket.id} is now in room ${joinedRoomId}`)
 
+      roomId = joinedRoomId;
       roomJoined = true;
       connectedUsers = 1;
     });
@@ -33,8 +35,9 @@
       console.log(`User joined: ${roomInfo.roomId}`);
       console.log(`${socket.id} is now in room ${roomInfo.roomId}`)
 
-      connectedUsers = roomInfo.usersConnected;
+      roomId = roomInfo.roomId;
       roomJoined = true;
+      connectedUsers = roomInfo.usersConnected;
     });
 
     // On user left
@@ -43,11 +46,19 @@
 
       connectedUsers--;
     });
+
+    // On room not found
+    socket.on('room-not-found', () => {
+      console.log('Room not found');
+      error = 'Room not found. Please check the ID and try again.';
+    });
   });
 
   onDestroy(() => {
     socket.off('connect');
     socket.off('room-created');
+    socket.off('user-joined');
+    socket.off('user-left');
   });
 
   function sendPingInformation(logs: string[]) {
@@ -82,6 +93,7 @@
 </script>
 
 {#if roomJoined}
+  <p>Room ID: {roomId}</p>
   <p>Connected users: {connectedUsers}</p>
   <button on:click={pingServers}>Ping all servers</button>
   {#each logs as log}
@@ -93,6 +105,9 @@
     <input bind:value={roomId} type="text" id="server-id" name="server-id" />
 
     <button on:click|preventDefault={joinRoom} type="submit">Join</button>
+    {#if error}
+      <p>{error}</p>
+    {/if}
   </form>
 
   <form>
