@@ -1,6 +1,8 @@
 import type { RoomInfo } from '$lib/types';
 import { Server } from 'socket.io';
 
+import type { PingInformation } from './utils';
+
 export default function socketHandler(server: any) {
   const io = new Server(server, {
     cors: {
@@ -11,6 +13,7 @@ export default function socketHandler(server: any) {
 
   const rooms: Map<string, string[]> = new Map();
   const users: Map<string, string> = new Map();
+  const pings: Map<string, PingInformation> = new Map(); // socket.id -> ping
 
   io.on('connection', (socket) => {
     console.log('User connected', socket.id);
@@ -74,8 +77,9 @@ export default function socketHandler(server: any) {
     });
 
     // Ping information from client
-    socket.on('ping', (pingInformation) => {
+    socket.on('ping', (pingInformation: PingInformation) => {
       console.log(`Pings received from ${socket.id}`, pingInformation);
+      pings.set(socket.id, pingInformation);
     });
   });
 }
