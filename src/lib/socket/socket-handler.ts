@@ -1,5 +1,7 @@
 import ioClient from 'socket.io-client';
 
-const socket = ioClient('http://localhost:5173');
+const PORT = process.env.PORT;
+
+const socket = ioClient(`http://localhost:${PORT}`);
 
 export default socket;

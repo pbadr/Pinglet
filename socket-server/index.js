@@ -5,7 +5,7 @@ import socketHandler from './socket-handler/index.js';
 
 import { handler } from '../build/handler.js';
 
-const PORT = 5173;
+const PORT = process.env.PORT;
 const app = express();
 const server = createServer(app);
 
