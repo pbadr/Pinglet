@@ -78,6 +78,8 @@
 
   async function pingServers() {
     logs = [];
+    error = '';
+    
     const pingPromises = Object.entries(serverLocations).map(
       async ([serverName, serverLocation]): Promise<PingServerResponse> => {
         const serverInfo = await pingServer(serverName, serverLocation);
