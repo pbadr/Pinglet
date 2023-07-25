@@ -1,7 +1,7 @@
 <script lang="ts">
   import socket from '$lib/socket/socket-handler';
 
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
   import serverLocations from '$lib/location-server';
   import { pingServer } from '$lib/ping-server';
@@ -12,6 +12,10 @@
     socket.on('connect', () => {
       console.log('Connected from client');
     });
+  });
+
+  onDestroy(() => {
+    socket.off('connect');
   });
 
   function sendPingInformation(logs: string[]) {
