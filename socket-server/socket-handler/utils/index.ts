@@ -4,36 +4,24 @@ export type PingInformation = {
   responseTime: number,
 }
 
-export type ClientPings = {
-  [clientName: string]: PingInformation
-}
 
-/* ClientPings could be in the following format:
-{
-  "Client 1": {
-    serverName: "Server 1",
-    serverLocation: "Server Location",
-    responseTime: x
-  }, ...
-}
+export function getAverageBestPing(clientPings: Map<string, PingInformation[]>): Map<string, number> {
+  let averagePing: Map<string, number> = new Map();
+  clientPings.forEach((pings, _) => {
+    pings.forEach((pingInformation) => {
+      if (!averagePing.has(pingInformation.serverName))
+        averagePing.set(pingInformation.serverName, 0);
 
-*/
+      averagePing.set(
+        pingInformation.serverName,
+        averagePing.get(pingInformation.serverName)! + pingInformation.responseTime
+      );
+    });
+  });
 
-type PingAverages = {
-  [serverName: string]: number
-}
-/* PingAverages could be in the following format:
-{
-  "Server 1": x,
-  "Server 2": y,
-  ...
-}
+  averagePing.forEach((value, key) => {
+    averagePing.set(key, value / clientPings.size);
+  });
 
-*/
-
-export function calculateAveragePing(clientPings: ClientPings) {
-}
-
-
-export function getBestServer(pingAverages: PingAverages) {
+  return averagePing;
 }
