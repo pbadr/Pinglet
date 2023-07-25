@@ -6,24 +6,33 @@
   import serverLocations from '$lib/location-server';
   import { pingServer } from '$lib/ping-server';
 
+  $: logs = [] as string[];
+
   onMount(() => {
     socket.on('connect', () => {
       console.log('Connected from client');
     });
   });
 
-  function sendMessage() {
-    socket.emit('message', 'Hello from client');
+  function sendPingInformation(logs: string[]) {
+    socket.emit('ping', logs);
   }
 
-  function pingServers() {
-    Object.entries(serverLocations)
-    .forEach(([serverName, serverLocation]) => {
-      pingServer(serverName, serverLocation);
-    });
+  async function pingServers() {
+    logs = [];
+    const pingPromises = Object.entries(serverLocations).map(
+      async ([serverName, serverLocation]) => {
+        const serverInfo = await pingServer(serverName, serverLocation);
+        return `${serverInfo.serverName} - ${serverInfo.responseTime}ms`;
+      }
+    );
+
+    logs = await Promise.all(pingPromises);
+    sendPingInformation(logs);
   }
 </script>
 
-<h1>Send a message to client</h1>
-<button on:click={sendMessage}>Send</button>
 <button on:click={pingServers}>Ping all servers</button>
+{#each logs as log}
+  <p>{log}</p>
+{/each}

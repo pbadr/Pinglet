@@ -14,8 +14,8 @@ export default function socketHandler(server: any) {
       console.log('User disconnected', socket.id);
     });
     
-    socket.on('message', (message) => {
-      console.log('Message received', message);
+    socket.on('ping', (pingInformation) => {
+      console.log(`Pings received from ${socket.id}`, pingInformation);
     });
     
   });
