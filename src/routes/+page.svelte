@@ -84,6 +84,7 @@
 
     try {
       const pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
+      logs = pingInformation.map((pingInfo) => `${pingInfo.serverName} - ${pingInfo.responseTime}ms`);
       sendPingInformation(pingInformation);
     } catch (pingError) {
       console.log(error);
@@ -103,6 +104,10 @@
     console.log("Creating room...")
     socket.emit('create-room');
   }
+
+  function getBestPing() {
+    socket.emit('get-best-ping');
+  }
 </script>
 
 {#if roomJoined}
@@ -110,6 +115,7 @@
   <button on:click={() => navigator.clipboard.writeText(roomId)}>Copy ID</button>
   <p>Connected users: {connectedUsers}</p>
   <button on:click={pingServers}>Ping all servers</button>
+  <button on:click={getBestPing}>Get best ping for all clients</button>
   {#each logs as log}
   <p>{log}</p>
   {/each}

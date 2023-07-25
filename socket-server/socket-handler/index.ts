@@ -1,7 +1,7 @@
 import type { RoomInfo } from '$lib/types';
 import { Server } from 'socket.io';
 
-import type { PingInformation } from './utils';
+import type { ClientPings, PingInformation } from './utils';
 
 export default function socketHandler(server: any) {
   const io = new Server(server, {
@@ -13,7 +13,7 @@ export default function socketHandler(server: any) {
 
   const rooms: Map<string, string[]> = new Map();
   const users: Map<string, string> = new Map();
-  const pings: Map<string, PingInformation> = new Map(); // socket.id -> ping
+  const pings: Map<string, ClientPings> = new Map(); // room.id -> [{ client.id -> pingInformation }, ...]
 
   io.on('connection', (socket) => {
     console.log('User connected', socket.id);
@@ -77,9 +77,22 @@ export default function socketHandler(server: any) {
     });
 
     // Ping information from client
-    socket.on('ping', (pingInformation: PingInformation) => {
-      console.log(`Pings received from ${socket.id}`, pingInformation);
-      pings.set(socket.id, pingInformation);
+    socket.on('ping', (pingInformationFromClient: PingInformation) => {
+      // Get room of socket
+      const roomId = users.get(socket.id) as string;
+
+      const previousPings = pings.get(roomId) || {};
+      pings.set(roomId, {
+        ...previousPings,
+        [socket.id]: pingInformationFromClient
+      })
+      
+      console.log(pings);
+    });
+
+    // Get best ping for clients
+    socket.on('get-best-ping', () => {
+      // Get room of socket
     });
   });
 }
