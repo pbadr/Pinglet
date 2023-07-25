@@ -8,9 +8,9 @@
 
   import type { PingServerResponse, RoomInfo, averagePing } from '$lib/types';
 
-  $: roomId = '';
-  $: roomJoined = false;
-  $: connectedUsers = 0;
+  $: userId = '';
+  $: inputRoomId = '';
+  $: room = {} as RoomInfo;
   $: logs = [] as string[];
   $: error = '';
 
@@ -18,17 +18,15 @@
     // On connect
     socket.on('connect', () => {
       console.log('Connected from client');
+      userId = socket.id;
     });
 
     // On room created
-    socket.on('room-created', (joinedRoomId: string) => {
-      console.log(`Room created: ${joinedRoomId}`);
-      console.log(`${socket.id} is now in room ${joinedRoomId}`)
+    socket.on('room-created', (roomInfo: RoomInfo) => {
+      console.log(`Room created: ${roomInfo.roomId}`);
+      console.log(`${socket.id} is now in room ${roomInfo.roomId}`)
 
-      roomId = joinedRoomId;
-      roomJoined = true;
-      connectedUsers = 1;
-
+      room = roomInfo;
       error = '';
     });
 
@@ -37,10 +35,7 @@
       console.log(`User joined: ${roomInfo.roomId}`);
       console.log(`${socket.id} is now in room ${roomInfo.roomId}`)
 
-      roomId = roomInfo.roomId;
-      roomJoined = true;
-      connectedUsers = roomInfo.usersConnected;
-
+      room = roomInfo;
       error = '';
     });
 
@@ -48,7 +43,10 @@
     socket.on('user-left', (userId: string) => {
       console.log(`User left: ${userId}`);
 
-      connectedUsers--;
+      room = {
+        ...room,
+        totalUsers: room.totalUsers - 1
+      }
     });
 
     // On room not found
@@ -107,11 +105,11 @@
   }
 
   function joinRoom() {
-    if (roomId === '')
+    if (inputRoomId === '')
       return;
     
     console.log("Joining room...");
-    socket.emit('join-room', roomId);
+    socket.emit('join-room', inputRoomId);
   }
 
   function createRoom() {
@@ -125,12 +123,15 @@
   }
 </script>
 
-{#if roomJoined}
-  <p>Room ID: {roomId}</p> 
-  <button on:click={() => navigator.clipboard.writeText(roomId)}>Copy ID</button>
-  <p>Connected users: {connectedUsers}</p>
-  <button on:click={pingServers}>Ping all servers</button>
-  <button on:click={getBestPing}>Get best ping for all clients</button>
+{#if room.roomId}
+  <p>Room ID: {room.roomId}</p> 
+  <button on:click={() => navigator.clipboard.writeText(room.roomId)}>Copy ID</button>
+  <p>Connected users: {room.totalUsers}</p>
+  <p>Owner id: {room.roomOwnerId}</p>
+  {#if room.roomOwnerId == userId}
+    <button on:click={pingServers}>Ping all servers</button>
+    <button on:click={getBestPing}>Get best ping</button>
+  {/if}
   {#each logs as log}
   <p>{log}</p>
   {/each}
@@ -140,7 +141,7 @@
 {:else}
   <form>
     <label for="server-id">Room ID</label>
-    <input bind:value={roomId} type="text" id="server-id" name="server-id" />
+    <input bind:value={inputRoomId} type="text" id="server-id" name="server-id" />
 
     <button on:click|preventDefault={joinRoom} type="submit">Join</button>
     {#if error}

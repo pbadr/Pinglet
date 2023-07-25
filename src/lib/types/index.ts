@@ -5,8 +5,10 @@ export type PingServerResponse = {
 }
 
 export type RoomInfo = {
+  roomOwnerId?: string,
   roomId: string,
-  usersConnected: number
+  usersConnected: string[],
+  totalUsers: number,
 }
 
 export type averagePing = {

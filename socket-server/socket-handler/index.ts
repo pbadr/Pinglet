@@ -12,7 +12,7 @@ export default function socketHandler(server: any) {
   });
   console.log("WebSocket server started");
 
-  const rooms: Map<string, string[]> = new Map();
+  const rooms: Map<string, RoomInfo> = new Map();
   const users: Map<string, string> = new Map();
   
   /*
@@ -44,17 +44,25 @@ export default function socketHandler(server: any) {
       const roomId = users.get(socket.id) as string;
       io.to(roomId).emit('user-left', socket.id);
 
-      // Remove user from room
+      // Remove user from users map
       users.delete(socket.id);
 
       // If only one user left in room, delete room
-      if (rooms.get(roomId)!.length === 1) {
+      if (rooms.get(roomId)?.totalUsers === 1) {
         console.log(`[!] Room ${roomId} deleted`);
         rooms.delete(roomId);
         return;
       }
 
-      rooms.set(roomId, rooms.get(roomId)!.filter((id) => id !== socket.id));
+      const newConnectedUsers = rooms.get(roomId)?.usersConnected.filter((userId) => userId !== socket.id);
+      const room: RoomInfo = {
+        ...rooms.get(roomId)!,
+        usersConnected: newConnectedUsers!,
+        totalUsers: newConnectedUsers!.length
+      }
+
+      console.log(room);
+      rooms.set(roomId, room);
     });
     
     // Create room
@@ -62,10 +70,18 @@ export default function socketHandler(server: any) {
       console.log(`Room created by ${socket.id}`);
       socket.join(socket.id);
 
-      rooms.set(socket.id, [socket.id]);
+      const roomInfo: RoomInfo = {
+        roomOwnerId: socket.id,
+        roomId: socket.id,
+        usersConnected: [socket.id],
+        totalUsers: 1
+      }
+
+      rooms.set(socket.id, roomInfo);
       users.set(socket.id, socket.id);
 
-      socket.emit('room-created', socket.id);
+      
+      socket.emit('room-created', roomInfo);
     });
 
     // Join room
@@ -77,19 +93,21 @@ export default function socketHandler(server: any) {
         return;
       }
 
-      socket.join(roomId);
-      console.log(`[+] ${socket.id} joined room ${roomId}`);
+      const room = rooms.get(roomId)!;
+      socket.join(room.roomId);
+      console.log(`[+] ${socket.id} joined room ${room.roomId}`);
 
-      rooms.get(roomId)!.push(socket.id);
-      users.set(socket.id, roomId);
-
-      console.log(rooms.get(roomId));
-      const roomInfo = {
-        roomId,
-        usersConnected: rooms.get(roomId)!.length
+      const updatedRoom = {
+        ...room,
+        usersConnected: [...room.usersConnected, socket.id],
+        totalUsers: room.totalUsers + 1
       } as RoomInfo;
-      
-      io.to(roomId).emit('user-joined', roomInfo);
+      rooms.set(roomId, updatedRoom);
+
+      console.log(updatedRoom);
+
+      users.set(socket.id, roomId);
+      io.to(roomId).emit('user-joined', updatedRoom);
     });
 
     // Ping information from client
