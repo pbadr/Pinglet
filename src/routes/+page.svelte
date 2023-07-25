@@ -28,6 +28,8 @@
       roomId = joinedRoomId;
       roomJoined = true;
       connectedUsers = 1;
+
+      error = '';
     });
 
     // On user joined
@@ -38,6 +40,8 @@
       roomId = roomInfo.roomId;
       roomJoined = true;
       connectedUsers = roomInfo.usersConnected;
+
+      error = '';
     });
 
     // On user left
@@ -74,8 +78,13 @@
       }
     );
 
-    logs = await Promise.all(pingPromises);
-    sendPingInformation(logs);
+    try {
+      logs = await Promise.all(pingPromises);
+      sendPingInformation(logs);
+    } catch (pingError) {
+      console.log(error);
+      error = 'Error pinging one of the servers. Please try again.';
+    }
   }
 
   function joinRoom() {
@@ -100,6 +109,9 @@
   {#each logs as log}
   <p>{log}</p>
   {/each}
+  {#if error}
+    <p>{error}</p>
+  {/if}
 {:else}
   <form>
     <label for="server-id">Room ID</label>
