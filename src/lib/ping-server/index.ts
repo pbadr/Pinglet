@@ -10,7 +10,13 @@ const options = {
   headers: headers,
 }
 
-export async function pingServer(serverName: string, serverLocation: string) {
+export type PingServerResponse = {
+  serverName: string,
+  serverLocation: string,
+  responseTime: number,
+}
+
+export async function pingServer(serverName: string, serverLocation: string): Promise<PingServerResponse> {
   const startTime = Date.now();
   const response = await fetch(`https://${serverLocation}`, options);
   if (response.ok) {
@@ -19,6 +25,8 @@ export async function pingServer(serverName: string, serverLocation: string) {
       serverName,
       serverLocation,
       responseTime: endTime - startTime,
-    }
+    };
   }
+
+  throw new Error(`Failed to ping ${serverName} in ${serverLocation}`);
 }
