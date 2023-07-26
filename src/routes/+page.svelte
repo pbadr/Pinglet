@@ -49,6 +49,10 @@
         ...room,
         totalUsers: room.totalUsers - 1
       }
+
+      if (usersDonePinging > 0) {
+        usersDonePinging--;
+      }
     });
 
     // On room not found
@@ -59,6 +63,7 @@
 
     // Initiate ping start
     socket.on('ping-started', () => {
+      usersDonePinging = 0;
       pingServers();
     });
 
