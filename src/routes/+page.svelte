@@ -69,7 +69,7 @@
     });
 
     // On ping updated
-    socket.on('ping-updated', (roomId: string, userId: string) => {
+    socket.on('ping-updated', (userId: string) => {
       console.log(`User ${userId} has finished pinging`);
       usersDonePinging++;
 
