@@ -14,6 +14,7 @@
   $: logs = [] as string[];
   $: usersDonePinging = 0;
   $: pinging = false;
+  $: bestPingMessage = '';
   $: error = '';
 
   onMount(() => {
@@ -85,6 +86,11 @@
       bestAveragePings.forEach((bestAveragePing) => {
         logs.push(`${bestAveragePing.serverName} - ${bestAveragePing.averagePing}ms`);
       });
+
+      const bestServer = logs[0].split(' - ')[0];
+      const bestAveragePing = logs[0].split(' - ')[1];
+
+      bestPingMessage = `The best ping for everyone is ${bestServer} with an average of ${bestAveragePing}ms`;
     });
   });
 
@@ -107,6 +113,7 @@
   async function clientNotifyPing() {
     pinging = true;
     usersDonePinging = 0;
+    bestPingMessage = '';
 
     console.log("Notify all connected clients to ping...");
     socket.emit('notify-ping', room.roomId);
@@ -168,6 +175,9 @@
   {#if room.roomOwnerId == userId}
     <button disabled={pinging} on:click={clientNotifyPing}>Ping</button>
     <button disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
+  {/if}
+  {#if bestPingMessage !== ''}
+    <p>The best ping for everyone is {logs[0]}</p>
   {/if}
   {#each logs as log}
   <p>{log}</p>
