@@ -171,13 +171,6 @@
 
 {#if room.roomId}
 <div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
-  <div>
-    {#each room.usersConnected as user}
-      <div class="flex">
-        <img src={`https://flagcdn.com/20x15/${user.countryCode}.png`} alt="Country code" />
-      </div>
-    {/each}
-  </div>
   <div class="flex gap-1 font-medium text-black">
     <p class="text-md">Room ID <span class="info">{room.roomId}</span></p>
     <button type="button" on:click={() => {
@@ -190,6 +183,11 @@
     </button>
   </div>
   <p class="text-md">Connected users <span class="info ">{room.totalUsers}</span></p>
+  <div class="flex gap-x-1">
+    {#each room.usersConnected as user}
+        <img src={`https://flagcdn.com/32x24/${user.countryCode}.png`} alt="Country code" />
+    {/each}
+  </div>
   <p class="text-md">Owner ID <span class="info">{room.roomOwnerId}</span></p>
   <p class="text-md">Users done pinging <span class="info">{usersDonePinging}/{room.totalUsers}</span></p>
   {#if room.roomOwnerId == userId}
@@ -199,10 +197,10 @@
     </div>
   {/if}
   {#if bestPingMessage !== ''}
-    <p class="w-max font-bold text-green-900 bg-green-300 p-2 rounded-md">The best ping for everyone is {logs[0]}</p>
+    <p class="w-max font-bold text-green-900 bg-green-300 border border-green-900 px-4 py-2 rounded-md">The best ping for everyone is {logs[0]}</p>
   {/if}
   {#each logs as log}
-  <p class="w-max font-medium text-white bg-slate-700 p-2 rounded-md">{log}</p>
+  <p class="w-max font-medium text-white bg-slate-700 border border-slate-900 p-2 rounded-md">{log}</p>
   {/each}
   {#if error}
     <p>{error}</p>
