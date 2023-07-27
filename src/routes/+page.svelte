@@ -147,6 +147,9 @@
     } catch (pingError) {
       console.log(error);
       error = 'Error pinging one of the servers. Please try again.';
+
+      pinging = false;
+      usersDonePinging = 0;
     }
   }
 
