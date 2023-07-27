@@ -167,37 +167,58 @@
 </script>
 
 {#if room.roomId}
-  <p>Room ID: {room.roomId}</p> 
-  <button on:click={() => navigator.clipboard.writeText(room.roomId)}>Copy ID</button>
-  <p>Connected users: {room.totalUsers}</p>
-  <p>Owner id: {room.roomOwnerId}</p>
-  <p>Users done pinging: {usersDonePinging}/{room.totalUsers}</p>
+<div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
+  <div class="flex gap-1 font-medium text-black">
+    <p class="text-md">Room ID <span class="info">{room.roomId}</span></p>
+    <button type="button" on:click={() => navigator.clipboard.writeText(room.roomId)} aria-label="Copy room ID to clipboard">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+      </svg>
+    </button>
+  </div>
+  <p class="text-md">Connected users <span class="info ">{room.totalUsers}</span></p>
+  <p class="text-md">Owner ID <span class="info">{room.roomOwnerId}</span></p>
+  <p class="text-md">Users done pinging <span class="info">{usersDonePinging}/{room.totalUsers}</span></p>
   {#if room.roomOwnerId == userId}
-    <button disabled={pinging} on:click={clientNotifyPing}>Ping</button>
-    <button disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
+    <div class="container flex gap-x-2">
+      <button class="btn btn-blue" disabled={pinging} on:click={clientNotifyPing}>Ping</button>
+      <button class="btn btn-blue" disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
+    </div>
   {/if}
   {#if bestPingMessage !== ''}
-    <p>The best ping for everyone is {logs[0]}</p>
+    <p class="w-max font-bold text-green-900 bg-green-300 p-2 rounded-md">The best ping for everyone is {logs[0]}</p>
   {/if}
   {#each logs as log}
-  <p>{log}</p>
+  <p class="w-max font-medium text-white bg-slate-700 p-2 rounded-md">{log}</p>
   {/each}
   {#if error}
     <p>{error}</p>
   {/if}
+</div>
 {:else}
-  <form>
-    <label for="server-id">Room ID</label>
-    <input bind:value={inputRoomId} type="text" id="server-id" name="server-id" />
+<div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
+  <div class="container">
+    <form>
+      <label class="text-label" for="server-id">Room ID</label>
+      <input class="text-input" bind:value={inputRoomId} type="text" id="server-id" name="server-id" autocomplete="off" />
 
-    <button on:click|preventDefault={joinRoom} type="submit">Join</button>
-    {#if error}
-      <p>{error}</p>
-    {/if}
-  </form>
-
-  <form>
-    <label for="create-room">Create room</label>
-    <button name="create-room" on:click|preventDefault={createRoom} type="submit">Create</button>
-  </form>
+      <button class="btn btn-blue" on:click|preventDefault={joinRoom} type="submit">Join</button>
+      {#if error}
+        <p>{error}</p>
+      {/if}
+    </form>
+  </div>
+  <div class="container">
+    <form>
+      <label class="text-label" for="create-room">Create room</label>
+      <button class="btn btn-blue" name="create-room" on:click|preventDefault={createRoom} type="submit">Create</button>
+    </form>
+  </div>
+</div>
 {/if}
+
+<style lang="postcss">
+  :global(html) {
+    background-color: theme(colors.gray.100);
+  }
+</style>
