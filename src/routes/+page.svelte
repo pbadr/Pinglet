@@ -193,7 +193,7 @@
   {#if room.roomOwnerId == userId}
     <div class="container flex gap-x-2">
       <button class="btn btn-blue" disabled={pinging} on:click={clientNotifyPing}>Ping</button>
-      <button class="btn btn-blue" disabled={usersDonePinging != room.totalUsers} on:click={getBestPing}>Get best ping</button>
+      <button class="btn btn-blue" disabled={usersDonePinging != room.totalUsers || bestPingMessage !== ''} on:click={getBestPing}>Get best ping</button>
     </div>
   {/if}
   {#if bestPingMessage !== ''}
