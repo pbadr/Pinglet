@@ -167,6 +167,12 @@
 </script>
 
 {#if room.roomId}
+  {#each room.usersConnected as user}
+    <img src={`https://flagcdn.com/20x15/${user.countryCode}.png`} alt="Country code" /><p> {user.userId}</p>
+  {/each}
+{/if}
+
+{#if room.roomId}
 <div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
   <div class="flex gap-1 font-medium text-black">
     <p class="text-md">Room ID <span class="info">{room.roomId}</span></p>

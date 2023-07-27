@@ -4,10 +4,15 @@ export type PingServerResponse = {
   responseTime: number,
 }
 
+type User = {
+  userId: string,
+  countryCode: string,
+}
+
 export type RoomInfo = {
   roomOwnerId?: string,
   roomId: string,
-  usersConnected: string[],
+  usersConnected: User[],
   totalUsers: number,
 }
 

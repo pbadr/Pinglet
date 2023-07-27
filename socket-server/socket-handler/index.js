@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Server } from 'socket.io';
 
-import { getAverageBestPing } from './utils/index.js';
+import { getAverageBestPing, getUserFromSocket } from './utils/index.js';
 
 export default function socketHandler(server) {
   const io = new Server(server, {
@@ -32,7 +32,7 @@ export default function socketHandler(server) {
   io.on('connection', (socket) => {
 
     console.log('[+] User connected', socket.id);
-
+    
     // User disconnect
     socket.on('disconnect', () => {
       console.log('[-] User disconnected', socket.id);
@@ -53,7 +53,7 @@ export default function socketHandler(server) {
         return;
       }
 
-      const newConnectedUsers = rooms.get(roomId)?.usersConnected.filter((userId) => userId !== socket.id);
+      const newConnectedUsers = rooms.get(roomId)?.usersConnected.filter((user) => user.userId !== socket.id);
       const room = {
         ...rooms.get(roomId),
         usersConnected: newConnectedUsers,
@@ -68,11 +68,13 @@ export default function socketHandler(server) {
     socket.on('create-room', () => {
       console.log(`Room created by ${socket.id}`);
       socket.join(socket.id);
+      
+      const user = getUserFromSocket(socket)
 
       const roomInfo = {
         roomOwnerId: socket.id,
         roomId: socket.id,
-        usersConnected: [socket.id],
+        usersConnected: [user],
         totalUsers: 1
       }
 
@@ -96,9 +98,11 @@ export default function socketHandler(server) {
       socket.join(room.roomId);
       console.log(`[+] ${socket.id} joined room ${room.roomId}`);
 
+      const user = getUserFromSocket(socket);
+
       const updatedRoom = {
         ...room,
-        usersConnected: [...room.usersConnected, socket.id],
+        usersConnected: [...room.usersConnected, user],
         totalUsers: room.totalUsers + 1
       };
       rooms.set(roomId, updatedRoom);

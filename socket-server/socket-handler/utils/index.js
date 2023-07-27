@@ -1,9 +1,9 @@
-// @ts-ignore
+// @ts-nocheck
+import geoip from "geoip-lite";
+
 export function getAverageBestPing(clientPings) {
   let averagePing = new Map();
-  // @ts-ignore
   clientPings.forEach((pings, _) => {
-    // @ts-ignore
     pings.forEach((pingInformation) => {
       if (!averagePing.has(pingInformation.serverName))
         averagePing.set(pingInformation.serverName, 0);
@@ -21,4 +21,15 @@ export function getAverageBestPing(clientPings) {
   });
 
   return averagePing;
+}
+
+export function getUserFromSocket(socket) {
+  const remoteIP = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
+
+  const geo = geoip.lookup(remoteIP);
+
+  return {
+    userId: socket.id,
+    countryCode: geo.country.toLowerCase(),
+  }
 }
