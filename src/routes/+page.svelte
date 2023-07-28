@@ -7,9 +7,10 @@
   import { pingServer } from '$lib/ping-server';
 
   import type { PingServerResponse, RoomInfo, averagePing } from '$lib/types';
+  import CreateRoom from '$lib/components/CreateRoom.svelte';
+  import PingList from '$lib/components/PingList.svelte';
 
   $: userId = '';
-  $: inputRoomId = '';
   $: room = {} as RoomInfo;
   $: logs = [] as string[];
   $: usersDonePinging = 0;
@@ -153,19 +154,6 @@
     }
   }
 
-  function joinRoom() {
-    if (inputRoomId === '')
-      return;
-    
-    console.log("Joining room...");
-    socket.emit('join-room', inputRoomId);
-  }
-
-  function createRoom() {
-    console.log("Creating room...")
-    socket.emit('create-room');
-  }
-
   function getBestPing() {
     console.log("Getting best ping...")
     socket.emit('get-best-ping');
@@ -199,36 +187,10 @@
       <button class="btn btn-blue" disabled={usersDonePinging != room.totalUsers || bestPingMessage !== ''} on:click={getBestPing}>Get best ping</button>
     </div>
   {/if}
-  {#if bestPingMessage !== ''}
-    <p class="w-max font-bold text-green-900 bg-green-300 border border-green-900 px-4 py-2 rounded-md">The best ping for everyone is {logs[0]}</p>
-  {/if}
-  {#each logs as log}
-  <p class="w-max font-medium text-white bg-slate-700 border border-slate-900 p-2 rounded-md">{log}</p>
-  {/each}
-  {#if error}
-    <p>{error}</p>
-  {/if}
+  <PingList {logs} {bestPingMessage} {error} />
 </div>
 {:else}
-<div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
-  <div class="container">
-    <form>
-      <label class="text-label" for="server-id">Room ID</label>
-      <input class="text-input" bind:value={inputRoomId} type="text" id="server-id" name="server-id" autocomplete="off" />
-
-      <button class="btn btn-blue" on:click|preventDefault={joinRoom} type="submit">Join</button>
-      {#if error}
-        <p>{error}</p>
-      {/if}
-    </form>
-  </div>
-  <div class="container">
-    <form>
-      <label class="text-label" for="create-room">Create room</label>
-      <button class="btn btn-blue" name="create-room" on:click|preventDefault={createRoom} type="submit">Create</button>
-    </form>
-  </div>
-</div>
+  <CreateRoom />
 {/if}
 
 <style lang="postcss">
