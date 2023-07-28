@@ -170,6 +170,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Ping - Link to the closest server</title>
+</svelte:head>
+
 {#if room.roomId}
 <div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
   <div class="flex gap-1 font-medium text-black">
