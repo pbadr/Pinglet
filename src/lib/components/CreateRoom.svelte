@@ -17,19 +17,14 @@
   }
 </script>
 
-<div class="flex flex-col mx-auto gap-y-4 pt-6 px-6">
-  <div class="container">
-    <form>
-      <label class="text-label" for="server-id">Room ID</label>
-      <input class="text-input" bind:value={inputRoomId} type="text" id="server-id" name="server-id" autocomplete="off" />
-
+<div class="flex flex-col justify-center items-center h-screen w-full gap-y-2 px-4 md:px-0">
+  <div class="flex flex-col gap-y-2 w-full md:w-2/4">
+    <div class="flex flex-col gap-y-2">
+      <input class="text-input" bind:value={inputRoomId} type="text" id="server-id" name="server-id" autocomplete="off" placeholder="Room ID"/>
       <button class="btn btn-blue" on:click|preventDefault={joinRoom} type="submit">Join</button>
-    </form>
-  </div>
-  <div class="container">
-    <form>
-      <label class="text-label" for="create-room">Create room</label>
-      <button class="btn btn-blue" name="create-room" on:click|preventDefault={createRoom} type="submit">Create</button>
-    </form>
+    </div>
+    <div>
+      <button class="w-full btn btn-blue" name="create-room" on:click|preventDefault={createRoom} type="submit">Create Room</button>
+    </div>
   </div>
 </div>

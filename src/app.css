@@ -7,7 +7,7 @@
 }
 
 .btn {
-  @apply font-bold py-2 px-4 rounded-lg;
+  @apply font-bakbak-one py-3 px-4 rounded-lg;
   transition: background-color 100ms ease;
 }
 
@@ -16,10 +16,12 @@
 }
 
 .btn-blue {
-  @apply bg-blue-500 text-white m-0;
+  background-color: #6F8CC7;
+  @apply text-white m-0;
 }
+
 .btn-blue:hover {
-  @apply bg-blue-700;
+  background-color: #5E7EBD;
 }
 
 .text-label {
@@ -27,10 +29,18 @@
 }
 
 .text-input {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  position: relative;
+  background-color: #B1C6F1;
+  color: #24375B;
+  @apply font-bakbak-one rounded-md py-3 indent-2;
   transition: background-color 100ms ease;
 }
 
+.text-input::placeholder {
+  color: #24375B;
+}
+
 :is(.text-input:hover, .text-input:focus) {
-  @apply bg-white dark:bg-gray-800;
+  outline: none;
+  background-color: #A0BDE7;
 }
