@@ -10,6 +10,8 @@
   import CreateRoom from '$lib/components/CreateRoom.svelte';
   import PingList from '$lib/components/PingList.svelte';
 
+  import { page } from '$app/stores';
+
   $: userId = '';
   $: room = {} as RoomInfo;
   $: logs = [] as string[];
@@ -19,6 +21,12 @@
   $: error = '';
 
   onMount(() => {
+    // Get room ID from URL and join room
+    const roomId = $page.params.roomId;
+    if (roomId) {
+      socket.emit('join-room', roomId);
+    }
+    
     // On connect
     socket.on('connect', () => {
       console.log('Connected from client');
