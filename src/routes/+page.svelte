@@ -69,6 +69,8 @@
     // Initiate ping start
     socket.on('ping-started', () => {
       usersDonePinging = 0;
+      bestPingMessage = '';
+
       pingServers();
     });
 
