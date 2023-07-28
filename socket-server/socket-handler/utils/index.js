@@ -27,9 +27,10 @@ export function getUserFromSocket(socket) {
   const remoteIP = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 
   const geo = geoip.lookup(remoteIP);
+  const countryCode = geo?.country.toLowerCase() || 'us';
 
   return {
     userId: socket.id,
-    countryCode: geo.country.toLowerCase(),
+    countryCode,
   }
 }
