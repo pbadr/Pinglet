@@ -200,7 +200,7 @@
   <PingList {logs} {bestPingMessage} {error} />
 </div>
 {:else}
-  <CreateRoom />
+  <CreateRoom {error} />
 {/if}
 
 <style lang="postcss">
