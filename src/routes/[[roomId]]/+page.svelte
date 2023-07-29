@@ -21,6 +21,7 @@
   $: error = '';
 
   onMount(() => {
+    console.log($page.url.href)
     // Get room ID from URL and join room
     const roomId = $page.params.roomId;
     if (roomId) {
@@ -177,7 +178,7 @@
   {:else}
     <meta property="og:description" content="Create a room and share the link to find the closest server to you and all your friends!" />
   {/if}
-  <meta property="og:image" content="assets/ping.png">
+  <meta property="og:image" content={`${$page.url.href}assets/ping.png`}>
   <meta property="og:url" content={`${$page.url.href}`}>
   <meta property="og:type" content="website">
 </svelte:head>
