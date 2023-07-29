@@ -1,6 +1,6 @@
-# Ping
+# Pinglet
 
-Ping helps you determine the closest region for all your friends to connect on a game server.
+Pinglet helps you find the closest server for all your friends to connect to.
 
 ## Developing locally
 

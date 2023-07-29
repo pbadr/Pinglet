@@ -172,7 +172,7 @@
 
 <svelte:head>
   <title>Ping - Link to the closest server</title>
-  <meta property="og:title" content="Ping - Link to the closest server">
+  <meta property="og:title" content="Pinglet - ping to the closest server">
   {#if $page.params.roomId}
     <meta property="og:description" content="Your friend has invited you to find the closest server to everyone in the lobby" />
   {:else}
