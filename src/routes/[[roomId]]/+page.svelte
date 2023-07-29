@@ -179,6 +179,9 @@
     <meta property="og:description" content="Create a room and share the link to find the closest server to you and all your friends!" />
   {/if}
   <meta property="og:image" content={`${$page.url.href}assets/ping.png`}>
+  <meta property="og:image:width" content="250">
+  <meta property="og:image:height" content="250">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:url" content={`${$page.url.href}`}>
   <meta property="og:type" content="website">
 </svelte:head>
