@@ -16,6 +16,7 @@ export type RoomInfo = {
   totalUsers: number,
 }
 
-export type averagePing = {
-  [serverName: string]: number
+export type AveragePing = {
+  serverName: string,
+  averagePing: number,
 }

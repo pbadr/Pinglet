@@ -6,7 +6,7 @@
   import serverLocations from '$lib/location-server';
   import { pingServer } from '$lib/ping-server';
 
-  import type { PingServerResponse, RoomInfo, averagePing } from '$lib/types';
+  import type { PingServerResponse, RoomInfo, AveragePing } from '$lib/types';
   import CreateRoom from '$lib/components/CreateRoom.svelte';
   import PingList from '$lib/components/PingList.svelte';
 
@@ -14,7 +14,7 @@
 
   $: userId = '';
   $: room = {} as RoomInfo;
-  $: logs = [] as string[];
+  $: logs = [] as AveragePing[];
   $: usersDonePinging = 0;
   $: pinging = false;
   $: bestPingMessage = '';
@@ -93,18 +93,14 @@
     });
 
     // On best ping
-    socket.on('best-ping', (bestAveragePings: averagePing[]) => {
+    socket.on('best-ping', (bestAveragePings: AveragePing[]) => {
       bestAveragePings.sort((a, b) => a.averagePing - b.averagePing);
 
-      logs = [];
-      bestAveragePings.forEach((bestAveragePing) => {
-        logs.push(`${bestAveragePing.serverName} - ${bestAveragePing.averagePing}ms`);
-      });
+      logs = bestAveragePings;
 
-      const bestServer = logs[0].split(' - ')[0];
-      const bestAveragePing = logs[0].split(' - ')[1];
+      const bestPing = bestAveragePings[0];
 
-      bestPingMessage = `The best ping for everyone is ${bestServer} with an average of ${bestAveragePing}ms`;
+      bestPingMessage = `The best server is ${bestPing.serverName} with an average ping of ${bestPing.averagePing}ms`;
     });
   });
 
@@ -152,7 +148,10 @@
 
     try {
       const pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
-      logs = pingInformation.map((pingInfo) => `${pingInfo.serverName} - ${pingInfo.responseTime}ms`);
+      logs = pingInformation.map((pingInfo) => ({
+        serverName: pingInfo.serverName,
+        averagePing: pingInfo.responseTime,
+      }));
 
       sendPingInformation(pingInformation);
     } catch (pingError) {

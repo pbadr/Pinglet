@@ -1,16 +1,23 @@
 <script lang="ts">
+  import type { AveragePing } from "$lib/types";
+
   export let bestPingMessage: string;
-  export let logs: string[];
+  export let logs: AveragePing[];
 
   export let error: string;
 </script>
 
 <div class="flex flex-col gap-y-3">
-  {#if bestPingMessage !== ''}
-    <p class="best">The best ping for everyone is {logs[0]}</p>
+  {#if logs.length > 0}
+    <p class="message">For everyone connected in this room...</p>
   {/if}
-  {#each logs as log}
-    <p>{log}</p>
+
+  {#if bestPingMessage !== ''}
+    <p class="best">{bestPingMessage}</p>
+  {/if}
+
+  {#each logs as pingLog}
+    <p>{pingLog.serverName} had an average ping of {pingLog.averagePing}ms</p>
   {/each}
   {#if error}
     <p>{error}</p>
@@ -34,6 +41,12 @@
       opacity: 1;
       transform: translateX(0);
     }
+  }
+
+  p.message {
+    padding-left: 0;
+    color: #24375B;
+    background-color: unset;
   }
 
   p.best {
