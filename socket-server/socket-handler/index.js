@@ -4,9 +4,11 @@ import { Server } from 'socket.io';
 import { getAverageBestPing, getUserFromSocket } from './utils/index.js';
 
 export default function socketHandler(server) {
+  const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || 'http://127.0.0.1:5173';
+
   const io = new Server(server, {
     cors: {
-      origin: 'http://127.0.0.1:5173'
+      origin: ALLOWED_ORIGINS,
     }
   });
   console.log("WebSocket server started");
