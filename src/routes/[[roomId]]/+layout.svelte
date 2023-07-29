@@ -1,11 +1,9 @@
 <script>
   import "../../app.css";
-
-  import github from "$lib/assets/github.svg";
 </script>
 
 
-<a href="https://github.com/pbadr/ping" target="_blank" ><img src={github} alt="GitHub logo" /></a>
+<a href="https://github.com/pbadr/ping" target="_blank" ><img src="assets/github.svg" alt="GitHub logo" /></a>
 <slot />
 
 <style lang="postcss">

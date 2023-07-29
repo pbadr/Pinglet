@@ -171,6 +171,15 @@
 
 <svelte:head>
   <title>Ping - Link to the closest server</title>
+  <meta property="og:title" content="Ping - Link to the closest server">
+  {#if $page.params.roomId}
+    <meta property="og:description" content="Join the room to find the closest server to everyone in the lobby" />
+  {:else}
+    <meta property="og:description" content="Create a room and share the link to your friends to find the closest server to all of you" />
+  {/if}
+  <meta property="og:image" content="assets/ping.png">
+  <meta property="og:url" content={`${$page.url.href}`}>
+  <meta property="og:type" content="website">
 </svelte:head>
 
 {#if room.roomId}
