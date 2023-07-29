@@ -173,9 +173,9 @@
   <title>Ping - Link to the closest server</title>
   <meta property="og:title" content="Ping - Link to the closest server">
   {#if $page.params.roomId}
-    <meta property="og:description" content="Join the room to find the closest server to everyone in the lobby" />
+    <meta property="og:description" content="Your friend has invited you to find the closest server to everyone in the lobby" />
   {:else}
-    <meta property="og:description" content="Create a room and share the link to your friends to find the closest server to all of you" />
+    <meta property="og:description" content="Create a room and share the link to find the closest server to you and all your friends!" />
   {/if}
   <meta property="og:image" content="assets/ping.png">
   <meta property="og:url" content={`${$page.url.href}`}>
