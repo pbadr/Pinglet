@@ -171,7 +171,8 @@
 </script>
 
 <svelte:head>
-  <title>Ping - Link to the closest server</title>
+  <title>Pinglet - Link to the closest server</title>
+  <meta name="description" content="Pinglet is a tool to find the closest server to you and your friends.">
   <meta property="og:title" content="Pinglet - ping to the closest server">
   {#if $page.params.roomId}
     <meta property="og:description" content="Your friend has invited you to find the closest server to everyone in the lobby" />
