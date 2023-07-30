@@ -58,6 +58,14 @@
 
       const newRoomConnectedUsers = room.usersConnected.filter((user) => user.userId !== userId);
 
+      // If user left was the owner, assign new owner
+      if (room.roomOwnerId == userId) {
+        room = {
+          ...room,
+          roomOwnerId: newRoomConnectedUsers[newRoomConnectedUsers.length - 1].userId,
+        }
+      }
+
       room = {
         ...room,
         usersConnected: newRoomConnectedUsers,
