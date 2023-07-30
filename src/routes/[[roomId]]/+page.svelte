@@ -62,7 +62,7 @@
       if (room.roomOwnerId == userId) {
         room = {
           ...room,
-          roomOwnerId: newRoomConnectedUsers[newRoomConnectedUsers.length - 1].userId,
+          roomOwnerId: newRoomConnectedUsers[0].userId,
         }
       }
 
