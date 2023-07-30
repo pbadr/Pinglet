@@ -3,7 +3,7 @@
 </script>
 
 
-<a href="https://github.com/pbadr/ping" target="_blank" ><img src="assets/github.svg" alt="GitHub logo" /></a>
+<a href="https://github.com/pbadr/Pinglet" target="_blank" ><img src="assets/github.svg" alt="GitHub logo" /></a>
 <slot />
 
 <style lang="postcss">
