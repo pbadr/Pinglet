@@ -20,6 +20,8 @@
   $: bestPingMessage = '';
   $: error = '';
 
+  $: maxPing = 300;
+
   onMount(() => {
     console.log($page.url.href)
     // Get room ID from URL and join room
@@ -88,7 +90,7 @@
       usersDonePinging = 0;
       bestPingMessage = '';
 
-      pingServers();
+      pingServers(maxPing);
     });
 
     // On ping updated
@@ -140,7 +142,7 @@
     return;
   }
 
-  async function pingServers() {
+  async function pingServers(maxPing: number) {
     logs = [];
     error = '';
 
@@ -156,7 +158,9 @@
     );
 
     try {
-      const pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
+      let pingInformation: PingServerResponse[] = await Promise.all(pingPromises);
+      pingInformation = pingInformation.filter((pingInfo) => pingInfo.responseTime <= maxPing);
+
       logs = pingInformation.map((pingInfo) => ({
         serverName: pingInfo.serverName,
         averagePing: pingInfo.responseTime,
@@ -219,6 +223,10 @@
       <p class="main-dark-blue">Users done pinging</p>
       <span class="users-pinging-indicator">{usersDonePinging} / {room.totalUsers}</span>
     </div>
+    <div class="flex flex-col">
+      <label for="max-ping" class="main-dark-blue">Enter max ping on your end</label>
+      <input class="max-ping-input" name="max-ping" type="number" bind:value={maxPing} />
+    </div>
     {#if room.roomOwnerId == userId}
       <div class="container flex gap-x-2">
         <button class="btn btn-blue" disabled={pinging} on:click={clientNotifyPing}>Ping</button>
@@ -265,5 +273,20 @@
     text-align: center;
     padding: 0 10px;
     border-radius: 5px;
+  }
+  
+  .max-ping-input::-webkit-inner-spin-button,
+  .max-ping-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .max-ping-input {
+    padding: 0.5rem 1rem;
+    margin-top: 5px;
+    width: 65px;
+    border: 1px solid #24375B;
+    border-radius: 5px;
+    outline: none;
   }
 </style>
