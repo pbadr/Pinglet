@@ -6,7 +6,7 @@
   import { onMount, onDestroy } from 'svelte';
 
   import serverLocations from '$lib/location-server';
-  import { pingServer } from '$lib/ping-server';
+  import { initialPing, pingServer } from '$lib/ping-server';
 
   import type { PingServerResponse, RoomInfo, AveragePing } from '$lib/types';
   import CreateRoom from '$lib/components/CreateRoom.svelte';
@@ -25,7 +25,8 @@
   $: maxPing = 300;
 
   onMount(() => {
-    console.log($page.url.href)
+    console.log("Performing initial ping on the background...");
+    initialPing();
     // Get room ID from URL and join room
     const roomId = $page.params.roomId;
     if (roomId) {

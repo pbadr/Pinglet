@@ -1,4 +1,5 @@
 import type { PingServerResponse } from '../types';
+import serverLocations from '$lib/location-server';
 
 const headers = new Headers();
 headers.append('Accept-Encoding', 'gzip, deflate'); // Enable compression
@@ -25,4 +26,15 @@ export async function pingServer(serverName: string, serverLocation: string): Pr
   }
 
   throw new Error(`Failed to ping ${serverName} in ${serverLocation}`);
+}
+
+export async function initialPing(): Promise<void> {
+  const serverAddresses: string[] = Object.values(serverLocations);
+  
+  Promise.all(serverAddresses.map(async (serverAddress) => {
+    return await fetch(`https://${serverAddress}`, options);
+  }))
+  .then((_) => {
+    console.log('Initial ping successful');
+  })
 }
