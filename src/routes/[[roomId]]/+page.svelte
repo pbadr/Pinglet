@@ -1,4 +1,6 @@
 <script lang="ts">
+  import copy from '$lib/assets/copy.svg';
+
   import socket from '$lib/socket/socket-handler';
 
   import { onMount, onDestroy } from 'svelte';
@@ -180,6 +182,14 @@
     console.log("Getting best ping...")
     socket.emit('get-best-ping');
   }
+
+  function copyRoomToClipboard() {
+    navigator.clipboard.writeText(
+      `${$page.url.href}` + (room.roomId)
+    )
+
+    alert('Room link copied to clipboard!');
+  }
 </script>
 
 <svelte:head>
@@ -204,7 +214,12 @@
   <div class="flex flex-col gap-y-5 w-full md:w-2/4">
     <div class="flex flex-col">
       <p class="main-dark-blue">Room ID</p>
-      <span class="room-info">{room.roomId}</span>
+      <span class="room-info">
+        {room.roomId} 
+        <button on:click={copyRoomToClipboard}>
+          <img class="copy-image" alt="Copy room ID" src={copy} />
+        </button>
+      </span>
     </div>
     <div class="flex justify-between">
       <p class="main-dark-blue">Connected users</p>
@@ -251,10 +266,23 @@
   }
 
   .room-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: #B1C6F1;
     padding: 1rem 1.5rem;
     border-radius: 5px;
     background-color: #24375B;
+  }
+
+  .copy-image {
+    width: 30px;
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+
+  .copy-image:hover {
+    filter: brightness(0.8);
   }
 
   .connected-users-indicator {
