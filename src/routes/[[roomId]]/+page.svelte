@@ -187,6 +187,8 @@
     navigator.clipboard.writeText(
       `${$page.url.href}` + (room.roomId)
     )
+
+    alert('Room link copied to clipboard!');
   }
 </script>
 
